@@ -128,13 +128,13 @@ variable "worker_ami_name_filter_windows" {
 variable "worker_ami_owner_id" {
   description = "The ID of the owner for the AMI to use for the AWS EKS workers. Valid values are an AWS account ID, 'self' (the current account), or an AWS owner alias (e.g. 'amazon', 'aws-marketplace', 'microsoft')."
   type        = string
-  default     = "602401143452" // The ID of the owner of the official AWS EKS AMIs.
+  default     = "amazon"
 }
 
 variable "worker_ami_owner_id_windows" {
   description = "The ID of the owner for the AMI to use for the AWS EKS Windows workers. Valid values are an AWS account ID, 'self' (the current account), or an AWS owner alias (e.g. 'amazon', 'aws-marketplace', 'microsoft')."
   type        = string
-  default     = "801119661308" // The ID of the owner of the official AWS EKS Windows AMIs.
+  default     = "amazon"
 }
 
 variable "worker_additional_security_group_ids" {
@@ -200,7 +200,7 @@ variable "cluster_delete_timeout" {
 variable "wait_for_cluster_cmd" {
   description = "Custom local-exec command to execute for determining if the eks cluster is healthy. Cluster endpoint will be available as an environment variable called ENDPOINT"
   type        = string
-  default     = "for i in `seq 1 60`; do wget --no-check-certificate -O - -q $ENDPOINT/healthz >/dev/null && exit 0 || true; sleep 5; done; echo TIMEOUT && exit 1"
+  default     = "for i in `seq 1 60`; do if `command -v wget > /dev/null`; then wget --no-check-certificate -O - -q $ENDPOINT/healthz >/dev/null && exit 0 || true; else curl -k -s $ENDPOINT/healthz >/dev/null && exit 0 || true;fi; sleep 5; done; echo TIMEOUT && exit 1"
 }
 
 variable "wait_for_cluster_interpreter" {

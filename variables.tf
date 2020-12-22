@@ -47,6 +47,12 @@ variable "manage_aws_auth" {
   default     = true
 }
 
+variable "aws_auth_additional_labels" {
+  description = "Additionnal kubernetes labels applied on aws-auth ConfigMap"
+  default     = {}
+  type        = map(string)
+}
+
 variable "map_accounts" {
   description = "Additional AWS account numbers to add to the aws-auth configmap. See examples/basic/variables.tf for example format."
   type        = list(string)
@@ -79,7 +85,7 @@ variable "subnets" {
 }
 
 variable "tags" {
-  description = "A map of tags to add to all resources."
+  description = "A map of tags to add to all resources. Tags added to launch coniguration or templates override these values for ASG Tags only."
   type        = map(string)
   default     = {}
 }
@@ -312,7 +318,7 @@ variable "create_eks" {
 }
 
 variable "node_groups_defaults" {
-  description = "Map of values to be applied to all node groups. See `node_groups` module's documentaton for more details"
+  description = "Map of values to be applied to all node groups. See `node_groups` module's documentation for more details"
   type        = any
   default     = {}
 }
@@ -342,4 +348,22 @@ variable "cluster_encryption_config" {
     resources        = list(string)
   }))
   default = []
+}
+
+variable "fargate_profiles" {
+  description = "Fargate profiles to create. See `fargate_profile` keys section in fargate submodule's README.md for more details"
+  type        = any
+  default     = {}
+}
+
+variable "create_fargate_pod_execution_role" {
+  description = "Controls if the EKS Fargate pod execution IAM role should be created."
+  type        = bool
+  default     = true
+}
+
+variable "fargate_pod_execution_role_name" {
+  description = "The IAM Role that provides permissions for the EKS Fargate Profile."
+  type        = string
+  default     = null
 }
